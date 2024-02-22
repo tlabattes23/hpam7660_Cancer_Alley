@@ -1,0 +1,206 @@
+---
+title: "Louisiana Mortality Data Description"
+author: "Tyler LaBattes"
+date: "February 20, 2024"
+output:
+  pdf_document: default
+  pdf document: default
+---
+
+## LA Mortality File Codebook
+
+library(readr)
+la_mort <- 
+  read_csv("https://www.dropbox.com/scl/fi/fzsnhfd3lq80v2o3sag6c/la_mort.csv?rlkey=h1vyjm2b8ppgejgsg3e8evm7i&dl=1")
+  
+### *restatus* , Resident Status
+- 1 = State and county of occurrence and residence are the same.
+- 2 = State of occurrence and residence are the same, but County is different.
+- 3 = State of occurrence and residence are different, but both are in the U.S.
+- 4 = State of occurrence is in U.S., but Place of Residence is outside the U.S.
+
+### *stocr* , State of Occurrence
+- Abbreviation for state where death occurred
+
+### *cntyocr* , County of Occurence
+- counties coded alphabetically within each state 
+- 001-nnn = code range
+- 999 = county of less than 100,000 population
+
+### *popcntyocr*, Population Size of County of Occurence
+- 0 = County of 1,000,000 or more
+- 1 = County of 500,000 to 1,000,000
+- 2 = County of 250,000 to 500,000
+- 3 = County of 100,000 to 250,000
+- 9 = County of less than 100,000
+
+### *strsd*, State of Residence
+- Abbreviation for state where person lived
+
+### *cntyrsd*, County of Residence
+- counties coded alphabetically within each state 
+- 001-nnn = code range
+- 999 = county of less than 100,000 population
+
+### *popcntyresd*, Population Size of County of Residence
+- 0 = County of 1,000,000 or more
+- 1 = County of 500,000 to 1,000,000
+- 2 = County of 250,000 to 500,000
+- 3 = County of 100,000 to 250,000
+- 9 = County of less than 100,000
+
+### *stbrth*, State of birth
+- Abbreiation for state person was born in
+
+### *brthr*, State of birth
+- Recode of state of birth
+
+### *educ1989*, Education (1989)
+- 00 = No formal education
+- 01-08 = Years of elementary school
+- 9 = 1 year of high school
+- 10 = 2 years of high school
+- 11 = 3 years of high school
+- 12 = 4 years of high school
+- 13 = 1 year of college
+- 14 = 2 years of college
+- 15 = 3 years of college
+- 16 = 4 years of college
+- 17 = 5 or more years of college
+- 99 = Not Stated
+
+### *educ2003*, Education(2003)
+- 1 = 8th grade or less
+- 2 = 9 - 12th grade, no diploma
+- 3 = high school graduate or GED completed
+- 4 = some college credit, but no degree
+- 5 = Associate degree
+- 6 = Bachelor’s degree
+- 7 = Master’s degree
+- 8 = Doctorate or professional degree
+- 9 = Unknown
+
+### *educflag*, Education reporting flag
+- 0 = 1989 revision of education item on certificate
+- 1 = 2003 revision of education item on certificate
+- 2 = no education item on certificate
+
+### *monthdth*, Month of Death
+- 1 = January
+- 2 = February
+- 3 = March
+- 4 = April
+- 5 = May
+- 6 = June
+- 7 = July
+- 8 = August
+- 9 = September
+- 10 = October
+- 11 = November
+- 12 = December
+
+### *sex*, Sex of person
+- M = Male
+- F = Female
+
+### *age*, Age of person
+- If begin with 1 age reported in year, 001-135
+- If begin with 2 age reported in months, 001-011
+- If begin with 4 age reported in days, 001-027
+- If begin with 5 age reported in hours, 001-023
+- If begin with 6 age reported in minutes, 001-059 
+- 999 = age not stated
+
+### *placdth*, Place of Death
+- 1 = Hospital, clinic or Medical Center, Inpatient
+- 2 = Hospital, Clinic or Medical Center, Outpatient or admitted to Emergency Room
+- 3 = Hospital, Clinic or Medical Center, Dead on Arrival
+- 4 = Decedent’s home
+- 5 = Hospice facility
+- 6 = Nursing home/long term care
+- 7 = Other
+- 9 = Place of death unknown
+
+### *marstat*, Marital Status
+- S = Never married, single
+- M = Married
+- W = Widowed
+- D = Divorced
+- U = Marital Status unknown
+
+### *weekday*, Day of Week of Death
+- 1 = Sunday
+- 2 = Monday
+- 3 = Tuesday
+- 4 = Wednesday
+- 5 = Thursday
+- 6 = Friday
+- 7 = Saturday
+- 9 = Unknown
+
+### *year*, Year of data
+- number used for year death occurred
+
+### *mandeath*, Manner of Death
+- 1 = accident
+- 2 = suicide
+- 3 = homicide
+- 4 = pending investigation
+- 5 = could not determine
+- 6 = self-inflicted
+- 7 = natural
+- blank = not specified
+
+### *prgn* 
+
+### *ucod*, Underlying cause of death
+- ICD code used
+
+### *ucr358*, Underlying cause of death 358 recode
+- 001-456 = code range
+
+### *ucr113*, Underlying cause of death 113 recode
+- 001-135 = code range
+
+### *ucr39*, Underlying cause of death 39 recode
+- 01-42 = code range
+
+### *race*, Race of person
+- 1 = white
+- 2 = black
+- 3 = American Indian
+- 4 = Chinese
+- 5 = Japanese
+- 6 = Hawaiian
+- 7 = Filipino
+- 18 = Asian Indian
+- 28 = Korean
+- 38 = Samoan
+- 48 = Vietnamese
+- 58 = Guamanian
+- 68 = Other Asian or Pacific Islander
+
+### *race3*, Race recode 3
+- 1 = white
+- 2 = Races other than white or black
+- 3 = black
+
+### *race5*, Race recode 5
+- 1 = white
+- 2 = black
+- 3 = American Indian
+- 4 = Asian or Pacific Islander
+
+### *hispanic* Hispanic Origin
+- 100-199 = Non-hispanic
+- 200-209 = Spaniard
+- 210-219 = Mexican
+- 260-269 = Puerto Rican
+- 270-274 = Cuban
+- 275-279 = Dominican
+- 220 = Central and South American
+- 221-230 = Central American
+- 231-249 = South American
+- 250-259 = Latin American
+- 280-299 = Other Hispanic
+- 996-999 = Unknown
