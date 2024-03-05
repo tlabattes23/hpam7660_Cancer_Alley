@@ -1,0 +1,103 @@
+---
+title: "HPAM 7660 Data Assignment 4"
+author: "Tyler LaBattes"
+date: "March 4, 2024"
+output: "pdf_document"
+---
+
+The 3 essential components of data visualization are data, geom, and aes. Data is the dataset containing the variables that will be used. Geom is the geometric form you will use to display the variables. Aes is for the aesthetic attributes of the graph such as x/y, size, and shape. These 3 components are used to specify the way variables will be used to form a visualization.
+
+Below I am loading the packages I will use for this assignment.
+```{r}
+library(dplyr)
+library(knitr)
+library(ggplot2)
+```
+Next I will include the code below for the parish rates and cancer alley rates.
+```{r}
+parish_rates <- la_joined_stnrd %>%
+  group_by(cntyrsd, cancer_parish, year) %>%
+  summarize(cancer_rate_adj = sum(cancer_rate_adj, na.rm = TRUE), cancer39 = sum(cancer39), tot_pop = sum(tot_pop))
+parish_rates$pop_weight <- (parish_rates$cancer_rate_adj) * (parish_rates$tot_pop)
+cancer_alley_rates <- parish_rates %>%
+  group_by(cancer_parish, year) %>%
+  summarize(cancer_rate_adj_wt = sum(pop_weight) / sum(tot_pop))
+```
+In the code below I created a scatterplot for cancer rates by county in the year 2019.
+```{r}
+filter(year == 2019) %>%
+ggplot(data = parish_rates, mapping = aes(x = cntyrsd, y = cancer_rate_adj)) +
+  geom_point()
+```
+In the code below, I created a linegraph for the cancer rates per year from 2005 to 2019. I group the parishes by cancer alley parishes and non-cancer alley parishes to show the difference in cancer rates between the two groups. 
+```{r}
+cancer_alley_rates$cancer_parish <- factor(cancer_alley_rates$cancer_parish)
+ggplot(data = cancer_alley_rates, mapping = aes(x = year,y = cancer_rate_adj_wt, linetype = cancer_parish)) + 
+  geom_line()
+```
+I added a y axis value range of 0 to 300 to the graph in the code below.
+```{r}
+ggplot(data = cancer_alley_rates, mapping = aes(x = year,y = cancer_rate_adj_wt, linetype = cancer_parish)) + 
+  geom_line() +
+  scale_y_continuous(limits = c(0, 300))
+```
+Below I added some changes to the x axis variable by showing each year in the data and also edited the format of the years so that they would not overlap.
+```{r}
+ggplot(data = cancer_alley_rates, mapping = aes(x = year,y = cancer_rate_adj_wt, linetype = cancer_parish)) + 
+  geom_line() +
+  scale_y_continuous(limits = c(0, 300)) +
+  scale_x_continuous(breaks = seq(2005, 2019, by = 1)) +
+theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
+Below I added labels to the legend to specify what each line represents.
+```{r}
+ggplot(data = cancer_alley_rates, mapping = aes(x = year,y = cancer_rate_adj_wt, linetype = cancer_parish)) + 
+  geom_line() +
+  scale_y_continuous(limits = c(0, 300)) +
+  scale_x_continuous(breaks = seq(2005, 2019, by = 1)) +
+theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_linetype_discrete(name = NULL, labels = c("Rest of Louisiana","Cancer Alley"), guide = guide_legend(reverse = TRUE))
+```
+Finally, I am adding a title and y axis label to the linegraph. 
+```{r}
+ggplot(data = cancer_alley_rates, mapping = aes(x = year,y = cancer_rate_adj_wt, linetype = cancer_parish)) + 
+  geom_line() +
+  scale_y_continuous(limits = c(0, 300)) +
+  scale_x_continuous(breaks = seq(2005, 2019, by = 1)) +
+theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_linetype_discrete(name = NULL, labels = c("Rest of Louisiana","Cancer Alley"), guide = guide_legend(reverse = TRUE)) +
+  labs(title = "Cancer Mortality Rate Comparison", y = "Cancer Deaths per 100,000 Residents", x = NULL) 
+```
+Below, I am creating a bar graph for the average cancer rate from 2005-2019 for each parish in cancer alley. First, I set the "county" variable at factor so that it would not be seen as a continuous variable. Next, I created a new data frame that include only cancer alley parishes, and I also calculated the cancer rates for the years into one average for each parish. Then, I created a bargraph using only the cancer alley parishes and the average cancer rates from 2005-2019 for those parishes.
+```{r}
+parish_rates$cntyrsd <- factor(parish_rates$cntyrsd)
+parish_rates_ca <- filter(parish_rates,cancer_parish == 1)
+parish_rates_ca <- parish_rates_ca %>%
+  summarize(avg_cancer_rate_adj = mean(cancer_rate_adj, na.rm = TRUE))
+ggplot(data = parish_rates_ca, mapping = aes(x = cntyrsd, y = avg_cancer_rate_adj)) +
+  geom_col()
+```
+Below I added a y axis value scale of 0-300, and I also added labels for the x axis, y axis, and title.
+```{r}
+ggplot(data = parish_rates_ca, mapping = aes(x = cntyrsd, y = avg_cancer_rate_adj)) +
+  geom_col() +
+  scale_y_continuous(limits = c(0, 300)) +
+  labs(title = "Average Cancer Alley Mortality Rates by County, 2005-2019", y = "Cancer Deaths per 100,000 Residents", x = "County")
+```
+Finally, I added x axis labels for each county to replace the county codes that were shown.
+```{r}
+ggplot(data = parish_rates_ca, mapping = aes(x = cntyrsd, y = avg_cancer_rate_adj)) +
+  geom_col() +
+  scale_y_continuous(limits = c(0, 300)) +
+  labs(title = "Average Cancer Alley Mortality Rates by County, 2005-2019", y = "Cancer Deaths per 100,000 Residents", x = "County") +
+  scale_x_discrete(labels = c("5" = "Acension",
+                              "33" = "East Baton Rouge",
+                              "47" = "Iberville",
+                              "51" = "Jefferson",
+                              "71" = "Orleans",
+                              "89" = "St. Charles",
+                              "93" = "St. James",
+                              "95" = "St. John the Baptist",
+                              "121" = "West Baton Rouge")) +
+theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+```
