@@ -9,20 +9,12 @@ The 3 essential components of data visualization are data, geom, and aes. Data i
 
 Below I am loading the packages I will use for this assignment.
 ```{r}
+load("~/data_4.RData")
 library(dplyr)
 library(knitr)
 library(ggplot2)
 ```
-Next I will include the code below for the parish rates and cancer alley rates.
-```{r}
-parish_rates <- la_joined_stnrd %>%
-  group_by(cntyrsd, cancer_parish, year) %>%
-  summarize(cancer_rate_adj = sum(cancer_rate_adj, na.rm = TRUE), cancer39 = sum(cancer39), tot_pop = sum(tot_pop))
-parish_rates$pop_weight <- (parish_rates$cancer_rate_adj) * (parish_rates$tot_pop)
-cancer_alley_rates <- parish_rates %>%
-  group_by(cancer_parish, year) %>%
-  summarize(cancer_rate_adj_wt = sum(pop_weight) / sum(tot_pop))
-```
+
 In the code below I created a scatterplot for cancer rates by county in the year 2019.
 ```{r}
 filter(year == 2019) %>%
